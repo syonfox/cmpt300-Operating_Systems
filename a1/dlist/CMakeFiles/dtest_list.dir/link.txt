@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/dtest_list.dir/dlist.c.o CMakeFiles/dtest_list.dir/dtest_list.c.o  -o dtest_list 

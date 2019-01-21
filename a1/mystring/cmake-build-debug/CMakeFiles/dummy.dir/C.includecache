@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/syonfox/github/cmpt300-Operating_Systems/a1/mystring/mystring.c
+mystring.h
+/home/syonfox/github/cmpt300-Operating_Systems/a1/mystring/mystring.h
+stdio.h
+-
+stdlib.h
+-
+
+/home/syonfox/github/cmpt300-Operating_Systems/a1/mystring/mystring.h
+
+/home/syonfox/github/cmpt300-Operating_Systems/a1/mystring/test_mystring.c
+mystring.h
+/home/syonfox/github/cmpt300-Operating_Systems/a1/mystring/mystring.h
+assert.h
+-
+sys/types.h
+-
+string.h
+-
+stdio.h
+-
+stdlib.h
+-
+

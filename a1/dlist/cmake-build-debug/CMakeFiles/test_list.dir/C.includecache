@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/syonfox/github/cmpt300-Operating_Systems/a1/list/list.c
+stdlib.h
+-
+list.h
+/home/syonfox/github/cmpt300-Operating_Systems/a1/list/list.h
+
+/home/syonfox/github/cmpt300-Operating_Systems/a1/list/list.h
+
