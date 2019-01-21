@@ -13,9 +13,10 @@
  */
 struct nodeStruct* List_createNode(int item) {
     struct nodeStruct* n = malloc(sizeof(struct nodeStruct));
-    n->next == NULL;
-    n->prev == NULL;
+    n->next = NULL;
+    n->prev = NULL;
     n->item = item;
+    return n;
 }
 
 
@@ -44,8 +45,6 @@ void List_insertTail (struct nodeStruct **headRef, struct nodeStruct *node){
     }
     next->next = node;
     node->prev = next;
-
-    return;
 }
 
 
@@ -68,7 +67,7 @@ int List_countNodes (struct nodeStruct *head) {
  * Return the first node holding the value item, return NULL if none found
  */
 struct nodeStruct* List_findNode(struct nodeStruct *head, int item){
-    struct nodeStruct* node = NULL;
+    //struct nodeStruct* node = NULL;
     while(head != NULL) {
         if(head->item == item){
             return head;
@@ -99,7 +98,6 @@ void List_deleteNode (struct nodeStruct **headRef, struct nodeStruct *node){
     }
 
     free(node);
-    return;
 }
 
 

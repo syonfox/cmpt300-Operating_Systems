@@ -1,4 +1,4 @@
-## This is a simple Makefile with lost of comments 
+## This is a simple Makefile with lost of comments
 ## Check Unix Programming Tools handout for more info.
 
 # Define what compiler to use and the flags.
@@ -12,11 +12,11 @@ CCFLAGS= -g -std=c99 -Wall -Werror
 #	command
 #
 # where "target" and "dependencies" are files (most of the time).
-# These means that if "target" does not exist or the modification 
+# These means that if "target" does not exist or the modification
 # date of the dependencies are older than the modification time of
 # "target" then "command" is executed.
 #
-# For example, the rule 
+# For example, the rule
 #
 # mystring.o : mystring.c
 #	$(CC) -c $(CCFLAGS) mystring.c
@@ -28,7 +28,7 @@ CCFLAGS= -g -std=c99 -Wall -Werror
 # are necessary to build the target files. i.e., it does not rebuild
 # files that it expects need not be rebuilt because they have not changed.
 #
-# Usually, the first target in a Makefile is called "all". 
+# Usually, the first target in a Makefile is called "all".
 # The dependencies of "all" are the files (or make targets) that we want to build.
 #
 
