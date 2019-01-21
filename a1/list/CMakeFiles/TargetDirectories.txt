@@ -1,3 +1,0 @@
-/home/syonfox/github/cmpt300-Operating_Systems/a1/list/CMakeFiles/rebuild_cache.dir
-/home/syonfox/github/cmpt300-Operating_Systems/a1/list/CMakeFiles/test_list.dir
-/home/syonfox/github/cmpt300-Operating_Systems/a1/list/CMakeFiles/edit_cache.dir
