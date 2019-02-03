@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/syonfox/github/cmpt300-Operating_Systems/a2/shell.c
+stdio.h
+-
+stdbool.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+wait.h
+-
+

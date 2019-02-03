@@ -59,45 +59,45 @@ RM = /home/syonfox/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/183.5153.40/bi
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist
+CMAKE_SOURCE_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug
+CMAKE_BINARY_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug
 
 #=============================================================================
-# Target rules for target CMakeFiles/test_dlist.dir
+# Target rules for target CMakeFiles/shell.dir
 
 # All Build rule for target.
-CMakeFiles/test_dlist.dir/all:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/depend
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target test_dlist"
-.PHONY : CMakeFiles/test_dlist.dir/all
+CMakeFiles/shell.dir/all:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/depend
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target shell"
+.PHONY : CMakeFiles/shell.dir/all
 
 # Include target in all.
-all: CMakeFiles/test_dlist.dir/all
+all: CMakeFiles/shell.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/test_dlist.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles 3
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_dlist.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/test_dlist.dir/rule
+CMakeFiles/shell.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/shell.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/shell.dir/rule
 
 # Convenience name for target.
-test_dlist: CMakeFiles/test_dlist.dir/rule
+shell: CMakeFiles/shell.dir/rule
 
-.PHONY : test_dlist
-
-# clean rule for target.
-CMakeFiles/test_dlist.dir/clean:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/clean
-.PHONY : CMakeFiles/test_dlist.dir/clean
+.PHONY : shell
 
 # clean rule for target.
-clean: CMakeFiles/test_dlist.dir/clean
+CMakeFiles/shell.dir/clean:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/clean
+.PHONY : CMakeFiles/shell.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/shell.dir/clean
 
 .PHONY : clean
 

@@ -48,10 +48,10 @@ RM = /home/syonfox/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/183.5153.40/bi
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist
+CMAKE_SOURCE_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug
+CMAKE_BINARY_DIR = /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/syonfox/github/cmpt300-Operating_Systems/a2/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,71 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_dlist
+# Target rules for targets named shell
 
 # Build rule for target.
-test_dlist: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_dlist
-.PHONY : test_dlist
+shell: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 shell
+.PHONY : shell
 
 # fast build rule for target.
-test_dlist/fast:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/build
-.PHONY : test_dlist/fast
+shell/fast:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/build
+.PHONY : shell/fast
 
-dlist.o: dlist.c.o
+shell.o: shell.c.o
 
-.PHONY : dlist.o
-
-# target to build an object file
-dlist.c.o:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/dlist.c.o
-.PHONY : dlist.c.o
-
-dlist.i: dlist.c.i
-
-.PHONY : dlist.i
-
-# target to preprocess a source file
-dlist.c.i:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/dlist.c.i
-.PHONY : dlist.c.i
-
-dlist.s: dlist.c.s
-
-.PHONY : dlist.s
-
-# target to generate assembly for a file
-dlist.c.s:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/dlist.c.s
-.PHONY : dlist.c.s
-
-test_dlist.o: test_dlist.c.o
-
-.PHONY : test_dlist.o
+.PHONY : shell.o
 
 # target to build an object file
-test_dlist.c.o:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/test_dlist.c.o
-.PHONY : test_dlist.c.o
+shell.c.o:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/shell.c.o
+.PHONY : shell.c.o
 
-test_dlist.i: test_dlist.c.i
+shell.i: shell.c.i
 
-.PHONY : test_dlist.i
+.PHONY : shell.i
 
 # target to preprocess a source file
-test_dlist.c.i:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/test_dlist.c.i
-.PHONY : test_dlist.c.i
+shell.c.i:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/shell.c.i
+.PHONY : shell.c.i
 
-test_dlist.s: test_dlist.c.s
+shell.s: shell.c.s
 
-.PHONY : test_dlist.s
+.PHONY : shell.s
 
 # target to generate assembly for a file
-test_dlist.c.s:
-	$(MAKE) -f CMakeFiles/test_dlist.dir/build.make CMakeFiles/test_dlist.dir/test_dlist.c.s
-.PHONY : test_dlist.c.s
+shell.c.s:
+	$(MAKE) -f CMakeFiles/shell.dir/build.make CMakeFiles/shell.dir/shell.c.s
+.PHONY : shell.c.s
 
 # Help Target
 help:
@@ -184,14 +157,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... test_dlist"
+	@echo "... shell"
 	@echo "... edit_cache"
-	@echo "... dlist.o"
-	@echo "... dlist.i"
-	@echo "... dlist.s"
-	@echo "... test_dlist.o"
-	@echo "... test_dlist.i"
-	@echo "... test_dlist.s"
+	@echo "... shell.o"
+	@echo "... shell.i"
+	@echo "... shell.s"
 .PHONY : help
 
 

@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/syonfox/github/cmpt300-Operating_Systems/a1/list/list.c" "/home/syonfox/github/cmpt300-Operating_Systems/a1/list/cmake-build-debug/CMakeFiles/test_list.dir/list.c.o"
-  "/home/syonfox/github/cmpt300-Operating_Systems/a1/list/test_list.c" "/home/syonfox/github/cmpt300-Operating_Systems/a1/list/cmake-build-debug/CMakeFiles/test_list.dir/test_list.c.o"
+  "/home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/dlist.c" "/home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles/test_dlist.dir/dlist.c.o"
+  "/home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/test_dlist.c" "/home/syonfox/github/cmpt300-Operating_Systems/a1/dlist/cmake-build-debug/CMakeFiles/test_dlist.dir/test_dlist.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
