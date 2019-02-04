@@ -11,6 +11,7 @@
 #define COMMAND_LENGTH 1024
 #define NUM_TOKENS (COMMAND_LENGTH / 2 + 1)
 #define DIR_LENGTH 256
+#define HISTORY_LENGTH 10
 
 /**
  * Command Input and Processing
@@ -96,6 +97,24 @@ void read_command(char *buff, char *tokens[], _Bool *in_background)
         tokens[token_count - 1] = 0;
     }
 }
+
+void read_history(char *buff, char *tokens[], _Bool *in_background)
+{
+    *in_background = false;
+
+    // Tokenize (saving original command string)
+    int token_count = tokenize_command(buff, tokens);
+    if (token_count == 0) {
+        return;
+    }
+
+    // Extract if running in background:
+    if (token_count > 0 && strcmp(tokens[token_count - 1], "&") == 0) {
+        *in_background = true;
+        tokens[token_count - 1] = 0;
+    }
+}
+
 void print(char * s){
     write(STDOUT_FILENO, s, strlen(s));
 }
@@ -106,6 +125,10 @@ int main(int argc, char* argv[])
 {
     char input_buffer[COMMAND_LENGTH];
     char *tokens[NUM_TOKENS];
+
+    char history_buffers[HISTORY_LENGTH][COMMAND_LENGTH];
+    int hist_end = 0;
+    int hist_len = 0;
 
     //setenv('TERM', 'xterm', 0);
     //  putenv("TERM=xterm");
@@ -136,10 +159,41 @@ int main(int argc, char* argv[])
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
 
+        hist_end++;
+        if(hist_end == HISTORY_LENGTH) hist_end = 0;
+        hist_len++;
+        strcpy(history_buffers[hist_end], input_buffer);
+
+
+        if(tokens[0] != NULL) {
+            if(tokens[0][0] == '!') {
+                int cmd;
+                if(tokens[0][1] == '!') {
+                   cmd = hist_end-1;
+                }
+                else {
+                    cmd = atoi(tokens[0]+1);
+                    cmd =  cmd % HISTORY_LENGTH;
+                }
+                strcpy(input_buffer, history_buffers[cmd]);
+                read_history(input_buffer, tokens, &in_background);
+            }
+        }
+
+
         if(tokens[0] == NULL){
             continue;
         }
-
+        else if(strcmp(tokens[0], "history") == 0) {
+            int hst = hist_len -10;
+            int hst_index = hist_end+1;
+            for(int i =0; i < HISTORY_LENGTH; i ++) {
+                write(STDOUT_FILENO, hst, sizeof(hst));
+                write(STDOUT_FILENO, "   ", strlen("   "));
+                write(STDOUT_FILENO, history_buffers[(hist_end+i)%HISTORY_LENGTH], strlen(history_buffers[(hist_end+i)%HISTORY_LENGTH]));
+                write(STDOUT_FILENO, "\n", strlen("\n"));
+            }
+        }
         else if(strcmp(tokens[0], "cd") == 0) {
             if(tokens[1] != NULL){
                 chdir(tokens[1]);
