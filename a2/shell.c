@@ -130,11 +130,14 @@ int main(int argc, char* argv[])
             write(STDOUT_FILENO, "\n", strlen("\n"));
         }
         if (in_background) {
-            write(STDOUT_FILENO, "Run in background.", strlen("Run in background."));
+            write(STDOUT_FILENO, "Run in background.",
+                    strlen("Run in background."));
         }
-
-        if(tokens[0] == 'cd') {
-
+        //write(STDOUT_FILENO, "CDs", strlen("CDs"));
+        //write(STDOUT_FILENO, "CDs", strlen("CDs"));
+        if(strcmp(tokens[0], "cd") == 0) {
+            write(STDOUT_FILENO, "CD", strlen("CD"));
+            chdir(tokens[1]);
         }
         else {//try and run it externally
 
