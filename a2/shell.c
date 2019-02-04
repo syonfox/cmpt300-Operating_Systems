@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <wait.h>
 #include <signal.h>
-//#include <errno.h>
+#include <errno.h>
 
 #define COMMAND_LENGTH 1024
 #define NUM_TOKENS (COMMAND_LENGTH / 2 + 1)
@@ -16,12 +16,21 @@
 #define HISTORY_LENGTH 10
 
 static volatile sig_atomic_t keep_running = 1;
-static volatile sig_atomic_t show_help = 0;
 static void sig_handler(int _)
 {
     (void)_;
     //keep_running = 0;
-    show_help = 1;
+    write(STDOUT_FILENO,
+          "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n",
+          strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n")
+    );
+    char cwd[DIR_LENGTH];
+    char prompt[DIR_LENGTH+32];
+    getcwd(cwd, DIR_LENGTH);
+    strcpy(prompt,cwd);
+    strcat(prompt, "$ ");
+    write(STDOUT_FILENO, prompt, strlen(prompt));
+
 }
 
 
@@ -86,7 +95,7 @@ void read_command(char *buff, char *tokens[], _Bool *in_background)
     // Read input
     int length = read(STDIN_FILENO, buff, COMMAND_LENGTH-1);
 
-    if ( (length < 0) ){
+    if ( (length < 0) && (errno !=EINTR) ){
         perror("Unable to read command from keyboard. Terminating.\n");
         exit(-1);
     }
@@ -179,14 +188,6 @@ int main(int argc, char* argv[])
 //        hist_len++;
 //        strcpy(history_buffers[hist_end], input_buffer);
 
-        if(show_help == 1) {
-            write(STDOUT_FILENO,
-                        "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n",
-                        strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n")
-                        );
-            show_help = 0;
-            continue;
-        }
 
         if(tokens[0] != NULL) {
             if(tokens[0][0] == '!') {

@@ -21,4 +21,6 @@ wait.h
 -
 signal.h
 -
+errno.h
+-
 
