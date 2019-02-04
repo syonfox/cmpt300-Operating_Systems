@@ -172,39 +172,55 @@ int main(int argc, char* argv[])
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
 
+//        hist_end++;
+//        if(hist_end == HISTORY_LENGTH) hist_end = 0;
+//        hist_len++;
+//        strcpy(history_buffers[hist_end], input_buffer);
+
+
+        if(tokens[0] != NULL) {
+            if(tokens[0][0] == '!') {
+                //write(STDOUT_FILENO,"Bang", strlen("Bang"));
+                int cmd;
+                if(tokens[0][1] == '!') {
+                    //write(STDOUT_FILENO,"Bang", strlen("Bang"));
+                   cmd = hist_end;
+                }
+                else {
+                    //char* num = tokens[0]+1;
+                    //write(STDOUT_FILENO,num, strlen(num));
+                    cmd = atoi(tokens[0]+1);
+                    cmd++;
+                    cmd =  cmd % HISTORY_LENGTH;
+                }
+                strcpy(input_buffer, history_buffers[cmd]);
+                read_history(input_buffer, tokens, &in_background);
+                write(STDOUT_FILENO, input_buffer, strlen(input_buffer));
+
+
+            }
+        }
+
         hist_end++;
         if(hist_end == HISTORY_LENGTH) hist_end = 0;
         hist_len++;
         strcpy(history_buffers[hist_end], input_buffer);
 
-
-        if(tokens[0] != NULL) {
-            if(tokens[0][0] == '!') {
-                int cmd;
-                if(tokens[0][1] == '!') {
-                   cmd = hist_end-1;
-                }
-                else {
-                    cmd = atoi(tokens[0]+1);
-                    cmd =  cmd % HISTORY_LENGTH;
-                }
-                strcpy(input_buffer, history_buffers[cmd]);
-                read_history(input_buffer, tokens, &in_background);
-            }
-        }
-
-
         if(tokens[0] == NULL){
             continue;
         }
         else if(strcmp(tokens[0], "history") == 0) {
-            int hst = hist_len -10;
-            int hst_index = hist_end+1;
-            for(int i =0; i < HISTORY_LENGTH; i ++) {
-                write(STDOUT_FILENO, hst, sizeof(hst));
+            int hst = hist_len ;
+            char snum[32];
+            for(int i = 0; i < HISTORY_LENGTH; i++) {
+
+                sprintf(snum, "%d", hst);
+                write(STDOUT_FILENO, snum, strlen(snum));
                 write(STDOUT_FILENO, "   ", strlen("   "));
-                write(STDOUT_FILENO, history_buffers[(hist_end+i)%HISTORY_LENGTH], strlen(history_buffers[(hist_end+i)%HISTORY_LENGTH]));
+                write(STDOUT_FILENO, history_buffers[(hist_end-i+1)%HISTORY_LENGTH], strlen(history_buffers[(hist_end-i+1)%HISTORY_LENGTH]));
                 write(STDOUT_FILENO, "\n", strlen("\n"));
+                hst--;
+                if(hst<0) break;
             }
         }
         else if(strcmp(tokens[0], "cd") == 0) {
@@ -282,6 +298,8 @@ int main(int argc, char* argv[])
 
             if (pid == 0) {
                 execvp(tokens[0], tokens);
+                write(STDOUT_FILENO, "Command not found\n", strlen("Command not found\n"));
+                return 0;
             } else {
                 if (!in_background) {
                     //write(STDOUT_FILENO, "test", strlen("test"));
@@ -298,6 +316,7 @@ int main(int argc, char* argv[])
     if (keep_running) {
        return 0;
     }
-    puts("Stopped by signal `SIGINT'");
+    write(STDOUT_FILENO, "Stopped by signal 'SIGINT'\n", strlen("Stopped by signal 'SIGINT'\n"));
+
     return EXIT_SUCCESS;
 }
