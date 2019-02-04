@@ -116,8 +116,8 @@ int main(int argc, char* argv[])
         // Get command
         // Use write because we need to use read() to work with
         // signals, and read() is incompatible with printf().
-        getcwd(prompt, DIR_LENGTH);
-
+        getcwd(cwd, DIR_LENGTH);
+        strcpy(prompt,cwd);
         strcat(prompt, "$ ");
         write(STDOUT_FILENO, prompt, strlen(prompt));
         _Bool in_background = false;
@@ -135,11 +135,67 @@ int main(int argc, char* argv[])
         }
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
-        if(strcmp(tokens[0], "cd") == 0) {
-            write(STDOUT_FILENO, "CD", strlen("CD"));
-            chdir(tokens[1]);
+
+        if(tokens[0] == NULL){
+            continue;
         }
-        else {//try and run it externally
+
+        else if(strcmp(tokens[0], "cd") == 0) {
+            if(tokens[1] != NULL){
+                chdir(tokens[1]);
+            }
+        }
+        else if(strcmp(tokens[0], "pwd") == 0) {
+            write(STDOUT_FILENO, cwd, strlen(cwd));
+            write(STDOUT_FILENO, "\n", strlen("\n"));
+        }
+        else if(strcmp(tokens[0], "exit") == 0) {
+            if(tokens[1] != NULL){
+                write(STDOUT_FILENO,
+                        "Aborting Exit: Improper Usage, see 'help exit'\n",
+                        strlen("Aborting Exit: Improper Usage, see 'help exit'\n")
+                        );
+            }
+            else {
+                write(STDOUT_FILENO, "Exiting.\n", strlen("Exiting.\n"));
+                return 0;
+            }
+        }
+        else if(strcmp(tokens[0], "help") == 0) {
+            if(tokens[1] != NULL){
+                if(tokens[3] != NULL) {
+                    write(STDOUT_FILENO, "Error Unexpected Token 3", strlen("Error Unexpected Token 3"));
+                }
+                else if(strcmp(tokens[1], "cd") == 0) {
+                    write(STDOUT_FILENO,
+                          "'cd' is a builtin command for changing the current working directory.\n",
+                          strlen("'cd' is a builtin command for changing the current working directory.\n"));
+                }
+                else if(strcmp(tokens[1], "pwd") == 0) {
+                    write(STDOUT_FILENO,
+                          "'pwd' is a builtin command for printing the current working directory.\n",
+                          strlen("'pwd' is a builtin command for printing the current working directory.\n"));
+                }
+                else if(strcmp(tokens[1], "exit") == 0) {
+                    write(STDOUT_FILENO,
+                          "'exit' is a builtin command for quiting this shell no paramaters are accepted.\n",
+                          strlen("'exit' is a builtin command for quiting this shell no paramaters are accepted.\n"));
+                } else {
+                    write(STDOUT_FILENO,"'",strlen("'"));
+                    write(STDOUT_FILENO,tokens[1],strlen(tokens[1]));
+                    write(STDOUT_FILENO,
+                            "' is an external command or application\n",
+                            strlen("' is an external command or application\n"));
+                }
+            }
+            else {
+                write(STDOUT_FILENO,
+                        "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n",
+                        strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n")
+                        );
+            }
+        }
+        else{//try and run it externally
 
             /**
              * Steps For Basic Shell:
@@ -152,15 +208,14 @@ int main(int argc, char* argv[])
 
 
             pid_t pid = fork();
-            if(pid == -1){
+            if (pid == -1) {
                 //print("Failed to fork");
                 exit(EXIT_FAILURE);
             }
 
             if (pid == 0) {
                 execvp(tokens[0], tokens);
-            }
-            else {
+            } else {
                 if (!in_background) {
                     //write(STDOUT_FILENO, "test", strlen("test"));
                     waitpid(0, NULL, NULL);
@@ -171,7 +226,8 @@ int main(int argc, char* argv[])
                 while (waitpid(-1, NULL, WNOHANG) > 0); // do nothing.
             }
         }
-
     }
+
+
     return 0;
 }
