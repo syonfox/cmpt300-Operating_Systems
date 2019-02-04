@@ -7,10 +7,20 @@
 #include <string.h>
 #include <unistd.h>
 #include <wait.h>
+#include <signal.h>
 
 #define COMMAND_LENGTH 1024
 #define NUM_TOKENS (COMMAND_LENGTH / 2 + 1)
 #define DIR_LENGTH 256
+
+static volatile sig_atomic_t keep_running = 1;
+
+static void sig_handler(int _)
+{
+    (void)_;
+    keep_running = 0;
+}
+
 
 /**
  * Command Input and Processing
@@ -104,6 +114,9 @@ void print(char * s){
  */
 int main(int argc, char* argv[])
 {
+
+    signal(SIGINT, sig_handler);
+
     char input_buffer[COMMAND_LENGTH];
     char *tokens[NUM_TOKENS];
 
@@ -111,7 +124,7 @@ int main(int argc, char* argv[])
     //  putenv("TERM=xterm");
     char cwd[DIR_LENGTH];
     char prompt[DIR_LENGTH+32];
-    while (true) {
+    while (keep_running) {
 
         // Get command
         // Use write because we need to use read() to work with
@@ -228,6 +241,9 @@ int main(int argc, char* argv[])
         }
     }
 
-
-    return 0;
+    if (keep_running) {
+       return 0;
+    }
+    puts("Stopped by signal `SIGINT'");
+    return EXIT_SUCCESS;
 }
