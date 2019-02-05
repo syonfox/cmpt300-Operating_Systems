@@ -1,5 +1,6 @@
 // Shell starter file
 // You may make any changes to any part of this file.
+//eddited by Kier Lindsay
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -21,8 +22,8 @@ static void sig_handler(int _)
     (void)_;
     //keep_running = 0;
     write(STDOUT_FILENO,
-          "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n",
-          strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n")
+          "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n history - displays comand history \n help - help on a program, usage: help {program}\n",
+          strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n history - displays comand history \n help - help on a program, usage: help {program}\n")
     );
     char cwd[DIR_LENGTH];
     char prompt[DIR_LENGTH+32];
@@ -88,24 +89,30 @@ int tokenize_command(char *buff, char *tokens[])
  * in_background: pointer to a boolean variable. Set to true if user entered
  *       an & as their last token; otherwise set to false.
  */
-void read_command(char *buff, char *tokens[], _Bool *in_background)
+void read_command(char *buff, char *bb, char *tokens[], _Bool *in_background)
 {
     *in_background = false;
 
     // Read input
     int length = read(STDIN_FILENO, buff, COMMAND_LENGTH-1);
 
-    if ( (length < 0) && (errno !=EINTR) ){
-        perror("Unable to read command from keyboard. Terminating.\n");
-        exit(-1);
+    while((length < 0)) {
+        if(errno !=EINTR){
+            perror("Unable to read command from keyboard. Terminating.\n");
+            exit(-1);
+        } else {
+            length = read(STDIN_FILENO, buff, COMMAND_LENGTH-1);
+        }
     }
+
+
 
     // Null terminate and strip \n.
     buff[length] = '\0';
     if (buff[strlen(buff) - 1] == '\n') {
         buff[strlen(buff) - 1] = '\0';
     }
-
+    strcpy(bb, buff);
     // Tokenize (saving original command string)
     int token_count = tokenize_command(buff, tokens);
     if (token_count == 0) {
@@ -119,9 +126,11 @@ void read_command(char *buff, char *tokens[], _Bool *in_background)
     }
 }
 
-void read_history(char *buff, char *tokens[], _Bool *in_background)
+void read_history(char *buff,char * bb, char *tokens[], _Bool *in_background)
 {
     *in_background = false;
+
+    strcpy(bb, buff);
 
     // Tokenize (saving original command string)
     int token_count = tokenize_command(buff, tokens);
@@ -150,6 +159,7 @@ int main(int argc, char* argv[])
     char input_buffer[COMMAND_LENGTH];
     char *tokens[NUM_TOKENS];
 
+    char buf_bac[COMMAND_LENGTH];
     char history_buffers[HISTORY_LENGTH][COMMAND_LENGTH];
     int hist_end = 0;
     int hist_len = 0;
@@ -168,7 +178,7 @@ int main(int argc, char* argv[])
         strcat(prompt, "$ ");
         write(STDOUT_FILENO, prompt, strlen(prompt));
         _Bool in_background = false;
-        read_command(input_buffer, tokens, &in_background);
+        read_command(input_buffer,buf_bac, tokens, &in_background);
 
         // DEBUG: Dump out arguments:
         for (int i = 0; tokens[i] != NULL; i++) {
@@ -177,16 +187,11 @@ int main(int argc, char* argv[])
             write(STDOUT_FILENO, "\n", strlen("\n"));
         }
         if (in_background) {
-            write(STDOUT_FILENO, "Run in background.",
-                    strlen("Run in background."));
+            write(STDOUT_FILENO, "Run in background.\n",
+                    strlen("Run in background.\n"));
         }
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
         //write(STDOUT_FILENO, "CDs", strlen("CDs"));
-
-//        hist_end++;
-//        if(hist_end == HISTORY_LENGTH) hist_end = 0;
-//        hist_len++;
-//        strcpy(history_buffers[hist_end], input_buffer);
 
 
         if(tokens[0] != NULL) {
@@ -199,127 +204,148 @@ int main(int argc, char* argv[])
                 }
                 else {
                     //char* num = tokens[0]+1;
-                    //write(STDOUT_FILENO,num, strlen(num));
+                    write(STDOUT_FILENO,tokens[0]+1, strlen(tokens[0]+1));
                     cmd = atoi(tokens[0]+1);
                     cmd++;
+                    if(cmd<=hist_len-10 || cmd>hist_len || cmd < 0) {
+                        write(STDOUT_FILENO,"Error: Index Out of Bounds\n", strlen("Error: Index Out of Bounds\n"));
+                        continue;
+                    }
                     cmd =  cmd % HISTORY_LENGTH;
                 }
+
                 strcpy(input_buffer, history_buffers[cmd]);
-                read_history(input_buffer, tokens, &in_background);
+                read_history(input_buffer, buf_bac, tokens, &in_background);
+                write(STDOUT_FILENO, history_buffers[cmd], strlen(history_buffers[cmd]));
+                write(STDOUT_FILENO, "(hst)\n", strlen("(hst)\n"));
                 write(STDOUT_FILENO, input_buffer, strlen(input_buffer));
-
-
-            }
-        }
-
-        hist_end++;
-        if(hist_end == HISTORY_LENGTH) hist_end = 0;
-        hist_len++;
-        strcpy(history_buffers[hist_end], input_buffer);
-
-        if(tokens[0] == NULL){
-            continue;
-        }
-        else if(strcmp(tokens[0], "history") == 0) {
-            int hst = hist_len ;
-            char snum[32];
-            for(int i = 0; i < HISTORY_LENGTH; i++) {
-
-                sprintf(snum, "%d", hst);
-                write(STDOUT_FILENO, snum, strlen(snum));
-                write(STDOUT_FILENO, "   ", strlen("   "));
-                write(STDOUT_FILENO, history_buffers[(hist_end-i+1)%HISTORY_LENGTH], strlen(history_buffers[(hist_end-i+1)%HISTORY_LENGTH]));
                 write(STDOUT_FILENO, "\n", strlen("\n"));
-                hst--;
-                if(hst<0) break;
+
             }
         }
-        else if(strcmp(tokens[0], "cd") == 0) {
-            if(tokens[1] != NULL){
-                chdir(tokens[1]);
-            }
-        }
-        else if(strcmp(tokens[0], "pwd") == 0) {
-            write(STDOUT_FILENO, cwd, strlen(cwd));
-            write(STDOUT_FILENO, "\n", strlen("\n"));
-        }
-        else if(strcmp(tokens[0], "exit") == 0) {
-            if(tokens[1] != NULL){
-                write(STDOUT_FILENO,
-                        "Aborting Exit: Improper Usage, see 'help exit'\n",
-                        strlen("Aborting Exit: Improper Usage, see 'help exit'\n")
-                        );
-            }
-            else {
-                write(STDOUT_FILENO, "Exiting.\n", strlen("Exiting.\n"));
-                return 0;
-            }
-        }
-        else if(strcmp(tokens[0], "help") == 0) {
-            if(tokens[1] != NULL){
-                if(tokens[3] != NULL) {
-                    write(STDOUT_FILENO, "Error Unexpected Token 3", strlen("Error Unexpected Token 3"));
+
+        if(tokens[0] != NULL){
+
+            //save hist
+            hist_end++;
+            if(hist_end == HISTORY_LENGTH) hist_end = 0;
+            hist_len++;
+            strcpy(history_buffers[hist_end], buf_bac);
+
+            if(strcmp(tokens[0], "history") == 0) {
+                int hst = hist_len-1;
+                char snum[32];
+                for(int i = 0; i < HISTORY_LENGTH; i++) {
+
+                    sprintf(snum, "%d", hst);
+                    write(STDOUT_FILENO, snum, strlen(snum));
+                    write(STDOUT_FILENO, " \t", strlen(" \t"));
+                    write(STDOUT_FILENO, history_buffers[(hist_end-i)%HISTORY_LENGTH], strlen(history_buffers[(hist_end-i)%HISTORY_LENGTH]));
+                    write(STDOUT_FILENO, "\n", strlen("\n"));
+                    hst--;
+                    if(hst<0) break;
                 }
-                else if(strcmp(tokens[1], "cd") == 0) {
-                    write(STDOUT_FILENO,
-                          "'cd' is a builtin command for changing the current working directory.\n",
-                          strlen("'cd' is a builtin command for changing the current working directory.\n"));
+            }
+            else if(strcmp(tokens[0], "cd") == 0) {
+                if(tokens[1] != NULL){
+                    chdir(tokens[1]);
                 }
-                else if(strcmp(tokens[1], "pwd") == 0) {
+            }
+            else if(strcmp(tokens[0], "pwd") == 0) {
+                if(tokens[1] != NULL){
                     write(STDOUT_FILENO,
-                          "'pwd' is a builtin command for printing the current working directory.\n",
-                          strlen("'pwd' is a builtin command for printing the current working directory.\n"));
-                }
-                else if(strcmp(tokens[1], "exit") == 0) {
-                    write(STDOUT_FILENO,
-                          "'exit' is a builtin command for quiting this shell no paramaters are accepted.\n",
-                          strlen("'exit' is a builtin command for quiting this shell no paramaters are accepted.\n"));
+                            "Aborting pwd: Unexpected Token'\n",
+                            strlen("Aborting pwd: Unexpected Token'\n")
+                            );
                 } else {
-                    write(STDOUT_FILENO,"'",strlen("'"));
-                    write(STDOUT_FILENO,tokens[1],strlen(tokens[1]));
+                    write(STDOUT_FILENO, cwd, strlen(cwd));
+                    write(STDOUT_FILENO, "\n", strlen("\n"));
+                }
+            }
+            else if(strcmp(tokens[0], "exit") == 0) {
+                if(tokens[1] != NULL){
                     write(STDOUT_FILENO,
-                            "' is an external command or application\n",
-                            strlen("' is an external command or application\n"));
+                            "Aborting Exit: Improper Usage, see 'help exit'\n",
+                            strlen("Aborting Exit: Improper Usage, see 'help exit'\n")
+                            );
+                }
+                else {
+                    write(STDOUT_FILENO, "Exiting.\n", strlen("Exiting.\n"));
+                    return 0;
                 }
             }
-            else {
-                write(STDOUT_FILENO,
-                        "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n",
-                        strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n help - help on a program, usage: help {program}\n")
-                        );
+            else if(strcmp(tokens[0], "help") == 0) {
+                if(tokens[1] != NULL){
+                    if(tokens[3] != NULL) {
+                        write(STDOUT_FILENO, "Error Unexpected Token 3", strlen("Error Unexpected Token 3"));
+                    }
+                    else if(strcmp(tokens[1], "cd") == 0) {
+                        write(STDOUT_FILENO,
+                              "'cd' is a builtin command for changing the current working directory.\n",
+                              strlen("'cd' is a builtin command for changing the current working directory.\n"));
+                    }
+                    else if(strcmp(tokens[1], "pwd") == 0) {
+                        write(STDOUT_FILENO,
+                              "'pwd' is a builtin command for printing the current working directory.\n",
+                              strlen("'pwd' is a builtin command for printing the current working directory.\n"));
+                    }
+                    else if(strcmp(tokens[1], "exit") == 0) {
+                        write(STDOUT_FILENO,
+                              "'exit' is a builtin command for quiting this shell no paramaters are accepted.\n",
+                              strlen("'exit' is a builtin command for quiting this shell no paramaters are accepted.\n"));
+                    }
+                    else if(strcmp(tokens[1], "history") == 0) {
+                        write(STDOUT_FILENO,
+                              "'history' is a builtin command that shows the previous 10 commands ran use !! to run last command or !n to run command n.\n",
+                              strlen("'history' is a builtin command that shows the previous 10 commands ran use !! to run last command or !n to run command n.\n"));
+                    }
+                    else {
+                        write(STDOUT_FILENO,"'",strlen("'"));
+                        write(STDOUT_FILENO,tokens[1],strlen(tokens[1]));
+                        write(STDOUT_FILENO,
+                                "' is an external command or application\n",
+                                strlen("' is an external command or application\n"));
+                    }
+                }
+                else {
+                    write(STDOUT_FILENO,
+                            "Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n history - displays comand history \n help - help on a program, usage: help {program}\n",
+                            strlen("Internal Commands: \n pwd - prints working directory\n cd - change directory\n exit - quit this shell \n history - displays comand history \n help - help on a program, usage: help {program}\n")
+                            );
+                }
             }
-        }
-        else{//try and run it externally
+            else{//try and run it externally
 
-            /**
-             * Steps For Basic Shell:
-             * 1. Fork a child process
-             * 2. Child process invokes execvp() using results in token array.
-             * 3. If in_background is false, parent waits for
-             *    child to finish. Otherwise, parent loops back to
-             *    read_command() again immediately.
-             */
+                /**
+                 * Steps For Basic Shell:
+                 * 1. Fork a child process
+                 * 2. Child process invokes execvp() using results in token array.
+                 * 3. If in_background is false, parent waits for
+                 *    child to finish. Otherwise, parent loops back to
+                 *    read_command() again immediately.
+                 */
 
 
-            pid_t pid = fork();
-            if (pid == -1) {
-                //print("Failed to fork");
-                exit(EXIT_FAILURE);
-            }
-
-            if (pid == 0) {
-                execvp(tokens[0], tokens);
-                write(STDOUT_FILENO, "Command not found\n", strlen("Command not found\n"));
-                return 0;
-            } else {
-                if (!in_background) {
-                    //write(STDOUT_FILENO, "test", strlen("test"));
-                    waitpid(0, NULL, NULL);
+                pid_t pid = fork();
+                if (pid == -1) {
+                    //print("Failed to fork");
+                    exit(EXIT_FAILURE);
                 }
 
-                // Cleanup any previously exited background child processes
-                // (The zombies)
-                while (waitpid(-1, NULL, WNOHANG) > 0); // do nothing.
+                if (pid == 0) {
+                    execvp(tokens[0], tokens);
+                    write(STDOUT_FILENO, "Command not found\n", strlen("Command not found\n"));
+                    return 0;
+                } else {
+                    if (!in_background) {
+                        //write(STDOUT_FILENO, "test", strlen("test"));
+                        waitpid(0, NULL, 0);
+                    }
+
+                    // Cleanup any previously exited background child processes
+                    // (The zombies)
+                    while (waitpid(-1, NULL, WNOHANG) > 0); // do nothing.
+                }
             }
         }
     }
